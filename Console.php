@@ -45,10 +45,10 @@ class Console
      * Executes a Symfony Command
      *
      */
-    public static function execute($command, $arguments = array())
+    public function execute($command, $arguments = array())
     {
         $options = $this->getOptions();
-        $consoleDir = $this->getConsoleDir($event);
+        $consoleDir = $this->getConsoleDir();
 
         if (null === $consoleDir) {
             return;
@@ -108,7 +108,14 @@ class Console
         return $options;
     }
 
-    protected function hasDirectory($configName, $path)
+    /**
+     * @param string $configName
+     * @param string $path
+     *
+     * @return bool
+     * @author Maximilian Ruta <mr@xtain.net>
+     */
+    public function hasDirectory($configName, $path)
     {
         if (!is_dir($path)) {
             $this->event->getIO()->write(sprintf('The %s (%s) specified in composer.json was not found in %s.', $configName, $path, getcwd()));
