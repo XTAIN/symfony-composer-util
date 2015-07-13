@@ -32,6 +32,11 @@ class Console
     );
 
     /**
+     * @var CommandEvent
+     */
+    protected $event;
+
+    /**
      * Construct
      *
      * @param CommandEvent $event      The command event.
@@ -61,6 +66,46 @@ class Console
         }
 
         $this->executeCommand($consoleDir, $command . ' ' . $argumentString);
+    }
+
+    /**
+     * Executes a Symfony Command
+     *
+     */
+    public function get($command, $arguments = array())
+    {
+        $options = $this->getOptions();
+        $consoleDir = $this->getConsoleDir();
+
+        if (null === $consoleDir) {
+            return;
+        }
+
+        $argumentString = '';
+
+        foreach ($arguments as $argument) {
+            $argumentString .= escapeshellarg($argument) . ' ';
+        }
+
+        $process = $this->executeCommand($consoleDir, $command . ' ' . $argumentString, false);
+
+        var_dump($process->getOutput());
+    }
+
+    /**
+     * Returns a relative path to the directory that contains the `AppKernel`.
+     *
+     * @return string|null The path to the app directory, null if not found.
+     */
+    public function getAppDir()
+    {
+        $options = $this->getOptions();
+
+        if (!$this->hasDirectory('symfony-app-dir', $options['symfony-app-dir'])) {
+            return;
+        }
+
+        return $options['symfony-app-dir'];
     }
 
     /**
@@ -126,7 +171,7 @@ class Console
         return true;
     }
 
-    protected function executeCommand($consoleDir, $cmd, $timeout = 300)
+    protected function executeCommand($consoleDir, $cmd, $output = true, $timeout = 300)
     {
         $event = $this->event;
         $php = escapeshellarg(static::getPhp(false));
@@ -137,10 +182,15 @@ class Console
         }
 
         $process = new Process($php.($phpArgs ? ' '.$phpArgs : '').' '.$console.' '.$cmd, null, null, null, $timeout);
-        $process->run(function ($type, $buffer) use ($event) { $event->getIO()->write($buffer, false); });
+        if ($output) {
+            $process->run(function ($type, $buffer) use ($event) { $event->getIO()->write($buffer, false); });
+        } else {
+            $process->run();
+        }
         if (!$process->isSuccessful()) {
             throw new \RuntimeException(sprintf('An error occurred when executing the "%s" command.', escapeshellarg($cmd)));
         }
+        return $process;
     }
 
     protected static function getPhpArguments()
