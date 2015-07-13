@@ -23,6 +23,6 @@
         "symfony/framework-bundle": "~2"
     },
     "autoload": {
-        "psr-4": { "XTAIN\\Composer\\Symfony\\Util": "" }
+        "psr-4": { "XTAIN\\Composer\\Symfony\\Util\\": "" }
     }
 }
