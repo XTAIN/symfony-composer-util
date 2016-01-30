@@ -89,7 +89,7 @@ class Console
 
         $process = $this->executeCommand($consoleDir, $command . ' ' . $argumentString, false);
 
-        var_dump($process->getOutput());
+        echo $process->getOutput();
     }
 
     /**
