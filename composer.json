@@ -2,6 +2,7 @@
 {
     "name": "xtain/symfony-composer-util",
     "type": "library",
+    "license": "MIT",
     "description": "Composer hook utils for symfony",
     "keywords": ["Composer", "Symfony"],
     "homepage": "https://xtain.net/",
